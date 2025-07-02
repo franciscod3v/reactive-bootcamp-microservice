@@ -6,4 +6,5 @@ import reactor.core.publisher.Mono;
 
 public interface IBootcampHandler {
     Mono<ServerResponse> listenPOSTCreateBootCamp(ServerRequest serverRequest);
+    Mono<ServerResponse> listenGETBootcamps(ServerRequest request);
 }

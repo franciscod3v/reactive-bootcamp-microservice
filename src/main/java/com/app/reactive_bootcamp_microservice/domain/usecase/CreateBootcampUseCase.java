@@ -2,14 +2,14 @@ package com.app.reactive_bootcamp_microservice.domain.usecase;
 
 import com.app.reactive_bootcamp_microservice.domain.api.ICreateBootcampServicePort;
 import com.app.reactive_bootcamp_microservice.domain.model.Bootcamp;
-import com.app.reactive_bootcamp_microservice.domain.spi.ICreateBootcampPersistencePort;
+import com.app.reactive_bootcamp_microservice.domain.spi.IBootcampPersistencePort;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
 public class CreateBootcampUseCase implements ICreateBootcampServicePort {
 
-    private final ICreateBootcampPersistencePort persistenceAdapter;
+    private final IBootcampPersistencePort persistenceAdapter;
 
     @Override
     public Mono<Bootcamp> createBootcamp(Bootcamp bootcamp) {

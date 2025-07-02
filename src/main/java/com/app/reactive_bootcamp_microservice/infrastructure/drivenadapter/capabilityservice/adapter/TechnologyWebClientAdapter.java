@@ -1,7 +1,10 @@
 package com.app.reactive_bootcamp_microservice.infrastructure.drivenadapter.capabilityservice.adapter;
 
+import com.app.reactive_bootcamp_microservice.domain.model.pagination.CapabilityBasic;
 import com.app.reactive_bootcamp_microservice.domain.spi.ICapabilityGateway;
 import com.app.reactive_bootcamp_microservice.infrastructure.drivenadapter.capabilityservice.dto.BootcampCapabilityDTO;
+import com.app.reactive_bootcamp_microservice.infrastructure.drivenadapter.capabilityservice.dto.CapabilityWithTechnologiesDTO;
+import com.app.reactive_bootcamp_microservice.infrastructure.drivenadapter.capabilityservice.mapper.CapabilityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
@@ -13,6 +16,7 @@ import java.util.List;
 public class TechnologyWebClientAdapter implements ICapabilityGateway {
 
     private final WebClient webClient;
+    private final CapabilityMapper mapper;
 
     @Override
     public Mono<Void> createBootcampCapabilityAssociations(Long bootcampId, Flux<Long> capabilitiesIds) {
@@ -30,5 +34,15 @@ public class TechnologyWebClientAdapter implements ICapabilityGateway {
                                 .retrieve()
                                 .bodyToMono(Void.class)
                 );
+    }
+
+    @Override
+    public Flux<CapabilityBasic> getCapabilitiesWithTechnologiesByBootcampId(Long bootcampId) {
+        return webClient
+                .get()
+                .uri("/api/capabilities/by-bootcamp/{bootcampId}", bootcampId)
+                .retrieve()
+                .bodyToFlux(CapabilityWithTechnologiesDTO.class)
+                .map(mapper::toModel);
     }
 }

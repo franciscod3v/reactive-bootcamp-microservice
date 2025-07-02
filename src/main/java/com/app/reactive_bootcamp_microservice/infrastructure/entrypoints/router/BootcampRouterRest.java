@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
@@ -14,6 +15,7 @@ public class BootcampRouterRest {
 
     @Bean(name = "bootcampRouterRestBean")
     public RouterFunction<ServerResponse> bootcampRouter (IBootcampHandler handler) {
-        return route(POST("/api/bootcamp"), handler::listenPOSTCreateBootCamp);
+        return route(POST("/api/bootcamp"), handler::listenPOSTCreateBootCamp)
+                .andRoute(GET("/api/bootcamps"), handler::listenGETBootcamps);
     }
 }

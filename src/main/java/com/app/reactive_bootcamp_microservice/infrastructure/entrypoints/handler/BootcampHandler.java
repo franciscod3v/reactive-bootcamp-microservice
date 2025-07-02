@@ -1,6 +1,7 @@
 package com.app.reactive_bootcamp_microservice.infrastructure.entrypoints.handler;
 
 import com.app.reactive_bootcamp_microservice.domain.api.ICreateBootcampServicePort;
+import com.app.reactive_bootcamp_microservice.domain.api.IGetBootcampByPagination;
 import com.app.reactive_bootcamp_microservice.domain.model.Bootcamp;
 import com.app.reactive_bootcamp_microservice.domain.spi.ICapabilityGateway;
 import com.app.reactive_bootcamp_microservice.infrastructure.entrypoints.dto.BootcampRequestDTO;
@@ -21,6 +22,7 @@ public class BootcampHandler implements IBootcampHandler{
 
     private final ICreateBootcampServicePort bootcampServicePort;
     private final ICapabilityGateway capabilityGateway;
+    private final IGetBootcampByPagination paginationService;
     private final BootcampMapperDTO mapper;
     private final DtoValidator validator;
 
@@ -38,5 +40,16 @@ public class BootcampHandler implements IBootcampHandler{
                                     ).then(ServerResponse.created(URI.create("/api/bootcamp/" + saved.getId())).build())
                             );
                 });
+    }
+
+    @Override
+    public Mono<ServerResponse> listenGETBootcamps(ServerRequest request) {
+        String sortBy = request.queryParam("sortBy").orElse("name");
+        Boolean asc = Boolean.parseBoolean(request.queryParam("asc").orElse("true"));
+        Integer page = Integer.parseInt(request.queryParam("page").orElse("0"));
+        Integer size = Integer.parseInt(request.queryParam("size").orElse("10"));
+
+        return paginationService.getAllBootcamps(sortBy, asc, page, size)
+                .flatMap(result -> ServerResponse.ok().bodyValue(result));
     }
 }
