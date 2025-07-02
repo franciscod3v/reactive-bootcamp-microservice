@@ -5,6 +5,7 @@ import com.app.reactive_bootcamp_microservice.domain.model.Bootcamp;
 import com.app.reactive_bootcamp_microservice.domain.spi.ICapabilityGateway;
 import com.app.reactive_bootcamp_microservice.infrastructure.entrypoints.dto.BootcampRequestDTO;
 import com.app.reactive_bootcamp_microservice.infrastructure.entrypoints.mapper.BootcampMapperDTO;
+import com.app.reactive_bootcamp_microservice.infrastructure.entrypoints.validators.DtoValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -21,10 +22,12 @@ public class BootcampHandler implements IBootcampHandler{
     private final ICreateBootcampServicePort bootcampServicePort;
     private final ICapabilityGateway capabilityGateway;
     private final BootcampMapperDTO mapper;
+    private final DtoValidator validator;
 
     @Override
     public Mono<ServerResponse> listenPOSTCreateBootCamp(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(BootcampRequestDTO.class)
+                .flatMap(validator::validateDto)
                 .flatMap(dto -> {
                     Bootcamp model = mapper.toModel(dto);
                     return bootcampServicePort.createBootcamp(model)
